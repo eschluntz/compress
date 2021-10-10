@@ -1,1 +1,4 @@
+pytest
+coverage
+codecov
 nltk
