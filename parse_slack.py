@@ -50,7 +50,7 @@ def get_blacklist() -> Set[str]:
     all_words = set([
         "a", "i", "it", "an", "int", "so",
         "is", "re", "we", "the", "in", "as",
-        "no", "ie", "eg", "me",
+        "no", "ie", "eg", "me", "be", "at",
     ])
     return all_words
 
@@ -119,7 +119,9 @@ def match_to_prev_abbrevs(shortcuts: Dict[str, str], phrase) -> Optional[str]:
 
 
 def match_abbrevs_to_phrases(results: List[tuple]) -> Dict[str, str]:
-    """Find the best abbreviation for each phrase"""
+    """Find the best abbreviation for each phrase.
+    Returns a dict of phrase -> abbrev, i.e. {'because': 'bc'}
+    """
     # auto suggest abbreviations
     word_set = get_blacklist()
     shortcuts = get_preset_abbrevs()
@@ -161,7 +163,53 @@ def match_abbrevs_to_phrases(results: List[tuple]) -> Dict[str, str]:
     return shortcuts
 
 
-# def create_config_for_abbrev()
+def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
+    """Generate configs for Autokey based on an abbreviation.
+    https://github.com/autokey/autokey
+
+    these files go in ~/.config/autokey/data/My Phrases/
+
+    Each abbrev gets two files, name.txt and .name.json"""
+
+    result_path = "output/autokey_phrases/"
+    filter_regex = "google-chrome.Google-chrome"  # shortcut only in these apps
+
+    with open(result_path + f"{phrase}.txt", 'w') as f:
+        f.write(phrase)
+
+    with open(result_path + f".{phrase}.json", 'w') as f:
+        config = {
+            "usageCount": 0,
+            "omitTrigger": False,
+            "prompt": False,
+            "description": phrase,
+            "abbreviation": {
+                "wordChars": "[\\w']",  # don't let apostraphes trigger
+                "abbreviations": [
+                    abbrev
+                ],
+                "immediate": False,
+                "ignoreCase": True,
+                "backspace": True,
+                "triggerInside": False
+            },
+            "hotkey": {
+                "hotKey": None,
+                "modifiers": []
+            },
+            "modes": [
+                1
+            ],
+            "showInTrayMenu": False,
+            "matchCase": True,
+            "filter": {
+                "regex": filter_regex,
+                "isRecursive": False
+            },
+            "type": "phrase",
+            "sendMode": "kb"
+        }
+        json.dump(config, f, indent=4)
 
 
 if __name__ == "__main__":
@@ -193,5 +241,7 @@ if __name__ == "__main__":
     n_to_keep = 200
     results = sorted(results, reverse=True)
     results = results[:n_to_keep]
-
     shortcuts = match_abbrevs_to_phrases(results)
+
+    # for phrase, abbrev in shortcuts.items():
+    #     create_autokey_config_for_abbrev(phrase, abbrev)
