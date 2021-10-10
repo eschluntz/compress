@@ -47,14 +47,6 @@ def clean_slack_msg(text: str) -> str:
 
 def get_blacklist() -> Set[str]:
     """Create set of words that can't be used for abreviations"""
-    # nltk.download("words")
-    # all_words_list = [w.lower() for w in nltk.corpus.words.words()]
-    # all_words = set(all_words_list)
-    # # nltk considers all single letters words
-    # # remove them, except a, i
-    # to_remove = "bcdefghjklmnopqrstuvwxyz"
-    # for c in to_remove:
-    #     all_words.remove(c)
     all_words = set([
         "a", "i", "it", "an", "int", "so",
         "is", "re", "we", "the", "in", "as",
@@ -169,7 +161,7 @@ def match_abbrevs_to_phrases(results: List[tuple]) -> Dict[str, str]:
     return shortcuts
 
 
-def create_config_for_abbrev()
+# def create_config_for_abbrev()
 
 
 if __name__ == "__main__":
