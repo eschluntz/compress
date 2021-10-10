@@ -1,0 +1,20 @@
+[
+    {
+        "text": "test_msg_1",
+        "user_profile": {
+            "name": "erik"
+        }
+    },
+    {
+        "text": "test with words",
+        "user_profile": {
+            "name": "erik"
+        }
+    },
+    {
+        "text": "test_msg_2",
+        "user_profile": {
+            "name": "not_erik"
+        }
+    }
+]
