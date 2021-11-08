@@ -1,1 +1,1 @@
-Export your slack data here as 'slack_export'.
+Export your slack data here into a folder called 'slack_export'.
