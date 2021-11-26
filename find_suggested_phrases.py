@@ -1,7 +1,6 @@
 import json
 import os
-import re
-from typing import List, Set, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple
 from collections import Counter, namedtuple
 import nltk
 from nltk.util import ngrams
@@ -9,7 +8,6 @@ from preset_abbrevs import PRESET_ABBREVS, BLACKLIST
 
 
 Shortcut = namedtuple("Shortcut", ["phrase", "abbrev", "score", "count", "len"])
-
 
 
 def get_possible_abbrevs(phrase: str) -> List[str]:
