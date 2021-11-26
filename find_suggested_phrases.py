@@ -2,8 +2,8 @@ import json
 import os
 from typing import List, Dict, Optional, Tuple
 from collections import Counter, namedtuple
-import nltk
 from nltk.util import ngrams
+import enchant
 from preset_abbrevs import PRESET_ABBREVS, BLACKLIST
 
 
@@ -69,34 +69,30 @@ def try_plural_of_word(word : str) -> str:
     if word[-1] == "o":
         return word + "es"
     if word[-1] == "h":
-        return word[:-1] + "es"
+        return word + "es"
     if word[-1] == "x":
-        return word[:-1] + "es"
+        return word + "es"
     if word[-1] == "z":
         return word[:-1] + "zes"
     return word + "s"
 
 
-def check_if_real_word(word : str) -> bool:
-    """Use nltk to find if input is a word"""
-    if word in ["robots", "problems"]:  # wtf nltk?
-        return True
-    elif word in ["abouts"]:
-        return False
-    return word in nltk.corpus.words.words()
-
-
 def get_plural(word : str) -> Optional[str]:
     candidate = try_plural_of_word(word)
-    if check_if_real_word(candidate):
+    d = enchant.Dict("en_US")
+    if candidate is None:
+        return None
+    elif d.check(candidate):
         return candidate
     else:
         return None
 
 
 def get_singular(word : str) -> Optional[str]:
+    """Note: doesn't work for complex plurals like wolves... todo"""
     candidate = word[:-1]
-    if check_if_real_word(candidate):
+    d = enchant.Dict("en_US")
+    if d.check(candidate) and get_plural(candidate) == word:
         return candidate
     else:
         return None
@@ -104,7 +100,9 @@ def get_singular(word : str) -> Optional[str]:
 
 def is_plural(word : str) -> bool:
     """Check if word is plural"""
-    return word[-1] == "s" and word[:-1] in nltk.corpus.words.words()
+    # not always correct, but close enough
+    d = enchant.Dict("en_US")
+    return word[-1] == "s" and d.check(word[:-1])
 
 
 def match_abbrevs_to_phrases(results: List[tuple]) -> Dict[str, str]:
@@ -279,16 +277,16 @@ def corpus_to_ngrams(corpus: List[str], max_n: int) -> Counter:
     """Convert a corpus of strings into n-grams"""
     # count N grams of several different Ns
     all_counts = Counter()
-    for text in texts:
+    for text in corpus:
         tokenized = text.split()
-        for n in range(1, max_n):
+        for n in range(1, max_n + 1):
             gram = ngrams(tokenized, n)
             all_counts.update(Counter(gram))
 
     return all_counts
 
 
-def get_top_shortcuts(all_counts: Counter, n: int) -> List[tuple]:
+def get_top_shortcuts(all_counts: Counter, n_to_keep: int) -> List[tuple]:
     """Get the top n-grams from the ngrams counter"""
     results : List[Tuple] = []
     for k, count in all_counts.items():
@@ -300,7 +298,6 @@ def get_top_shortcuts(all_counts: Counter, n: int) -> List[tuple]:
         score = (phrase_len - avg_shortcut_len) * count  # how many chars will be saved
         results.append((score, phrase, phrase_len, count))
 
-    n_to_keep = 200
     results = sorted(results, reverse=True)
     results = results[:n_to_keep]
     return results

@@ -1,11 +1,17 @@
 
+from typing import Counter
 from preset_abbrevs import BLACKLIST, PRESET_ABBREVS
 from parse_slack import extract_slack_msgs, clean_slack_msg
 from find_suggested_phrases import (
+    get_plural,
     get_possible_abbrevs,
+    get_top_shortcuts,
     match_abbrevs_to_phrases,
     match_to_prev_abbrevs,
-    create_autokey_config_for_abbrev
+    create_autokey_config_for_abbrev,
+    corpus_to_ngrams,
+    load_corpus,
+    get_singular,
 )
 import os
 import json
@@ -76,6 +82,61 @@ def test_match_to_prev_abbrevs():
     assert out == "tr"
 
     assert match_to_prev_abbrevs(shortcuts, "asdf") is None
+
+
+def test_get_top_shortcuts():
+    all_counts = Counter({
+        ("hello",): 10,
+        ("robots",): 3,
+        ("hello", "world"): 5,
+    })
+    out = get_top_shortcuts(all_counts, 2)
+    # score, phrase, phrase_len, count
+    expected = [
+        (45, "hello world", 11, 5),
+        (30, "hello", 5, 10)
+    ]
+    assert out == expected
+
+
+def test_corpus_to_n_grams():
+    corpus = [
+        "hello world",
+        "hello world goodbye world"
+    ]
+    out = corpus_to_ngrams(corpus, 2)
+    expected = Counter({
+        ("hello",): 2,
+        ("world",): 3,
+        ("goodbye",): 1,
+        ("hello", "world"): 2,
+        ("world", "goodbye"): 1,
+        ("goodbye", "world"): 1,
+    })
+    assert expected == out
+
+
+def test_get_plural():
+    for word, expected in [
+        ("things", None),
+        ("wolf", "wolves"),
+        ("box", "boxes"),
+        ("robot", "robots"),
+        ("lady", "ladies"),
+        ("ash", "ashes"),
+        ("hero", "heroes"),
+    ]:
+        assert expected == get_plural(word)
+
+
+def test_get_singular():
+    for word, expected in [
+        ("things", "thing"),
+        ("robots", "robot"),
+        ("robot", None),
+        ("hello", None),
+    ]:
+        assert expected == get_singular(word)
 
 
 # def test_autokey_configs():
