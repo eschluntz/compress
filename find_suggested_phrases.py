@@ -311,7 +311,7 @@ def get_top_shortcuts(all_counts: Counter, n: int) -> List[tuple]:
 if __name__ == "__main__":
 
     texts = load_corpus()
-    all_counts = corpus_to_ngrams(texts, 7)
+    all_counts = corpus_to_ngrams(texts, 3)
     top_results = get_top_shortcuts(all_counts, 200)
 
     shortcuts = match_abbrevs_to_phrases(top_results)
@@ -324,6 +324,8 @@ if __name__ == "__main__":
         final_results.append((score, phrase, abbrev, count))
 
     final_results = sorted(final_results)
+    abbrevs = {row[2]: row for row in final_results}
+    phrases = {row[1]: row for row in final_results}
 
     for score, phrase, abbrev, count in final_results:
         print(f"{score:5}\t{phrase:20}:{abbrev}")
