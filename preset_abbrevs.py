@@ -56,5 +56,5 @@ BLACKLIST = set([
     "a", "i", "it", "an", "int", "so",
     "is", "re", "we", "the", "in", "as",
     "no", "ie", "eg", "me", "be", "at", "do",
-    "talk",
+    "talk", "to",
 ])
