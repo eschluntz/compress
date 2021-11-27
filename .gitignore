@@ -3,3 +3,5 @@ __pycache__
 .mypy_cache
 data/
 .coverage
+htmlcov/
+output/autokey_phrases/
