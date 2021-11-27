@@ -10,6 +10,7 @@ from find_suggested_phrases import (
     match_to_prev_abbrevs,
     corpus_to_ngrams,
     get_singular,
+    fix_grammer,
 )
 from generate_autokeys import create_autokey_config_for_abbrev
 import os
@@ -175,6 +176,15 @@ def test_get_singular():
         ("hello", None),
     ]:
         assert expected == get_singular(word)
+
+
+def test_fix_grammer():
+    for word, expected in [
+        ("i think", "I think"),
+        ("dont", "don't"),
+        ("it doesnt matter", "it doesn't matter"),
+    ]:
+        assert expected == fix_grammer(word)
 
 
 def test_autokey_configs():

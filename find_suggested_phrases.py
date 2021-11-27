@@ -254,6 +254,17 @@ def get_top_shortcuts(all_counts: Counter, n_to_keep: int) -> List[tuple]:
     return results
 
 
+def fix_grammer(text: str) -> str:
+    """Fix grammar in text"""
+    words = text.split(" ")
+    fixes = {
+        "i": "I",
+        "dont": "don't",
+        "doesnt": "doesn't",
+    }
+    return " ".join([fixes.get(word, word) for word in words])
+
+
 def save_shortcuts(shortcuts: Dict[str, str]) -> None:
     """Save the shortcuts to a yaml file"""
     with open("output/shortcuts.yaml", 'w') as f:
@@ -280,5 +291,5 @@ if __name__ == "__main__":
     for score, phrase, abbrev, count in final_results:
         print(f"{score:5}\t{phrase:20}:{abbrev}")
 
-    final_shortcuts = {phrase: abbrev for _, phrase, abbrev, _ in final_results}
+    final_shortcuts = {fix_grammer(phrase): abbrev for _, phrase, abbrev, _ in final_results}
     save_shortcuts(final_shortcuts)
