@@ -39,7 +39,6 @@ before: bef
 bottom board: bb
 bottom boards: bbs
 but: u
-buts: us
 calendar invite: cali
 can: c
 can you: cy
@@ -111,7 +110,7 @@ likes: ls
 localization: z
 look: lk
 looks: lks
-looks like: lksl
+looks like: ll
 make: ma
 make sure: mase
 makes: mas
@@ -189,13 +188,11 @@ the wifibox: twb
 them: tm
 then: tn
 there: te
-there are: tea
 theres: ths
 these: tse
 theses: tses
 they: ty
 thing: thi
-things: this
 think: tk
 think that: tktt
 thinks: tks
@@ -213,7 +210,6 @@ top boards: tbs
 very: v
 want: wa
 want to: wat
-wants: was
 we can: wc
 we could: wcd
 we have: wh
