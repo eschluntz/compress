@@ -3,3 +3,4 @@ coverage
 codecov
 nltk
 pyenchant
+pyyaml
