@@ -6,7 +6,7 @@ python:
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get -y install libenchant
+  - sudo apt-get -y install libenchant-dev
 
 install:
   - pip install -r requirements.txt
