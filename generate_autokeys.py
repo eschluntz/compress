@@ -31,7 +31,7 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
             "prompt": False,
             "description": phrase,
             "abbreviation": {
-                "wordChars": "[\\w'&-]",  # don't let apostraphes, ampersands, or hyphens trigger
+                "wordChars": "[\\w'&-@]",  # don't trigger
                 "abbreviations": [
                     abbrev
                 ],
