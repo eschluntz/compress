@@ -3,4 +3,3 @@ coverage
 codecov
 nltk
 pyenchant
-json
