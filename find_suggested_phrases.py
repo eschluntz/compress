@@ -1,9 +1,10 @@
 import json
 import os
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Set, Tuple
 from collections import Counter, namedtuple
 from nltk.util import ngrams
 import enchant
+import yaml
 from preset_abbrevs import PRESET_ABBREVS, BLACKLIST
 
 
@@ -99,13 +100,15 @@ def get_singular(word : str) -> Optional[str]:
 
 
 def is_plural(word : str) -> bool:
-    """Check if word is plural"""
+    """Check if word is plural.
+    defintion of plural is that there exists a singular version"""
     # not always correct, but close enough
     d = enchant.Dict("en_US")
-    return word[-1] == "s" and d.check(word[:-1])
+    candidate = word[:-1]
+    return word[-1] == "s" and d.check(candidate) and get_plural(candidate) == word
 
 
-def match_abbrevs_to_phrases(results: List[tuple]) -> Dict[str, str]:
+def match_abbrevs_to_phrases(results: List[tuple], blacklist : Set[str], presets : Dict[str, str]) -> Dict[str, str]:
     """Find the best abbreviation for each phrase.
     Returns a dict of phrase -> abbrev, i.e. {'because': 'bc'}.
 
@@ -122,11 +125,10 @@ def match_abbrevs_to_phrases(results: List[tuple]) -> Dict[str, str]:
     the robots -> trs
     """
     # start with the presets
-    abbrev_set = BLACKLIST
-    shortcuts = PRESET_ABBREVS
-    for k, v in shortcuts.items():
+    abbrev_set = blacklist
+    shortcuts = presets
+    for _, v in shortcuts.items():
         abbrev_set.add(v)
-        # print(f"{k:20}:\t{v}")
 
     # single words first
     for row in results:
@@ -152,7 +154,6 @@ def match_abbrevs_to_phrases(results: List[tuple]) -> Dict[str, str]:
         posssible_abbrevs = get_possible_abbrevs(singular)
         for abbrev in posssible_abbrevs:  # ordered best to worst
             if abbrev not in abbrev_set and len(abbrev) < len(singular) - 1:
-                # print(f"{singular:20}:\t{abbrev}")
                 abbrev_set.add(abbrev)
                 shortcuts[singular] = abbrev
 
@@ -162,7 +163,6 @@ def match_abbrevs_to_phrases(results: List[tuple]) -> Dict[str, str]:
                     if abbrev2 not in abbrev_set and len(abbrev2) < len(plural) - 1:
                         abbrev_set.add(abbrev)
                         shortcuts[plural] = abbrev2
-                        # print(f"{plural:20}:\t{abbrev2}")
                     else:
                         print(f"warning, blocked {plural} as {abbrev2}")
                 break
@@ -205,61 +205,12 @@ def match_abbrevs_to_phrases(results: List[tuple]) -> Dict[str, str]:
 
                             # compare the scores to overwrite
                             if this_score > other_score:
-                                # print(f">>>>>>>overwriting: {phrase}:{abbrev} for {this_score} taken by {k} with {other_score}")
                                 shortcuts[phrase] = abbrev
                             break
                     break
 
     return shortcuts
 
-
-def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
-    """Generate configs for Autokey based on an abbreviation.
-    https://github.com/autokey/autokey
-
-    these files go in ~/.config/autokey/data/My Phrases/
-
-    Each abbrev gets two files, name.txt and .name.json"""
-
-    result_path = "output/autokey_phrases/"
-    filter_regex = "google-chrome.Google-chrome"  # shortcut only in these apps
-
-    with open(result_path + f"{phrase}.txt", 'w') as f:
-        f.write(phrase)
-
-    with open(result_path + f".{phrase}.json", 'w') as f:
-        config = {
-            "usageCount": 0,
-            "omitTrigger": False,
-            "prompt": False,
-            "description": phrase,
-            "abbreviation": {
-                "wordChars": "[\\w'&]",  # don't let apostraphes trigger
-                "abbreviations": [
-                    abbrev
-                ],
-                "immediate": False,
-                "ignoreCase": True,
-                "backspace": True,
-                "triggerInside": False
-            },
-            "hotkey": {
-                "hotKey": None,
-                "modifiers": []
-            },
-            "modes": [
-                1
-            ],
-            "showInTrayMenu": False,
-            "matchCase": True,
-            "filter": {
-                "regex": filter_regex,
-                "isRecursive": False
-            },
-            "type": "phrase",
-            "sendMode": "kb"
-        }
-        json.dump(config, f, indent=4)
 
 
 def load_corpus() -> List[str]:
@@ -303,13 +254,19 @@ def get_top_shortcuts(all_counts: Counter, n_to_keep: int) -> List[tuple]:
     return results
 
 
+def save_shortcuts(shortcuts: Dict[str, str]) -> None:
+    """Save the shortcuts to a yaml file"""
+    with open("output/shortcuts.yaml", 'w') as f:
+        yaml.dump(shortcuts, f, default_flow_style=False)
+
+
 if __name__ == "__main__":
 
     texts = load_corpus()
     all_counts = corpus_to_ngrams(texts, 3)
     top_results = get_top_shortcuts(all_counts, 200)
 
-    shortcuts = match_abbrevs_to_phrases(top_results)
+    shortcuts = match_abbrevs_to_phrases(top_results, BLACKLIST, PRESET_ABBREVS)
 
     final_results = []
     for phrase, abbrev in shortcuts.items():
@@ -319,11 +276,9 @@ if __name__ == "__main__":
         final_results.append((score, phrase, abbrev, count))
 
     final_results = sorted(final_results)
-    abbrevs = {row[2]: row for row in final_results}
-    phrases = {row[1]: row for row in final_results}
 
     for score, phrase, abbrev, count in final_results:
         print(f"{score:5}\t{phrase:20}:{abbrev}")
 
-    # for phrase, abbrev in shortcuts.items():
-    #     create_autokey_config_for_abbrev(phrase, abbrev)
+    final_shortcuts = {phrase: abbrev for _, phrase, abbrev, _ in final_results}
+    save_shortcuts(final_shortcuts)

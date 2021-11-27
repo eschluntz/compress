@@ -3,6 +3,7 @@
 # you can set None if you want to pick one automatically
 # you're responsible for creating any plurals here
 PRESET_ABBREVS = {
+    "ansible": "ans",
     "again": "ag",
     "actually": "ac",
     "anything": "ay",

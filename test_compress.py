@@ -8,11 +8,10 @@ from find_suggested_phrases import (
     get_top_shortcuts,
     match_abbrevs_to_phrases,
     match_to_prev_abbrevs,
-    create_autokey_config_for_abbrev,
     corpus_to_ngrams,
-    load_corpus,
     get_singular,
 )
+from generate_autokeys import create_autokey_config_for_abbrev
 import os
 import json
 
@@ -54,16 +53,55 @@ def test_get_abbreviations():
 def test_match_abbrevs():
     input_phrases = [
         # (score, phrase, phrase_len, count)
-        (100, "zzz", 0, 0),
-        (90, "zzzzz", 0, 0),
-        (80, "zz xx", 0, 0),
+        (9933, 'the', 3, 9933),
+        (6462, 'that', 4, 3231),
+        (4128, 'and', 3, 4128),
+        (4123, 'the robot', 9, 589),
+        (3940, 'this', 4, 1970),
+        (3801, 'robot', 5, 1267),
+        (3410, 'need to', 7, 682),
+        (3020, 'in the', 6, 755),
+        (2954, 'something', 9, 422),
+        (2952, 'robots', 6, 738),
+        (2844, 'should', 6, 711),
+        (2824, 'just', 4, 1412),
+        (2725, 'for', 3, 2725),
+        (2652, 'with', 4, 1326),
+        (2644, 'have', 4, 1322),
+        (2600, 'i think', 7, 520),
+        (2594, 'you', 3, 2594),
+        (2508, 'of the', 6, 627),
+        (2427, 'think', 5, 809),
+        (2372, 'on the', 6, 593)
     ]
     expected = {
-        "zzzzz": "zz",
-        "zz xx": "zx",
+        'about': 'ab',
+        'and': 'n',
+        'the': 't',
+        'that': 'tt',
+        'this': 'ts',
+        'robot': 'r',
+        'robots': 'rs',
+        'something': 's',
+        'somethings': 'ss',
+        'should': 'sd',
+        'just': 'j',
+        'for': 'f',
+        'with': 'w',
+        'withes': 'ws',
+        'have': 'h',
+        'haves': 'hs',
+        'you': 'y',
+        'yous': 'ys',
+        'think': 'tk',
+        'thinks': 'tks',
+        'the robot': 'tr',
+        'need to': 'nt',
+        'i think': 'itk',
+        'of the': 'ot'
     }
-    expected.update(PRESET_ABBREVS)
-    shortcuts = match_abbrevs_to_phrases(input_phrases)
+    presets = {"about": "ab", "and": "n", "i think": "itk"}
+    shortcuts = match_abbrevs_to_phrases(input_phrases, BLACKLIST, presets)
     assert expected == shortcuts
 
 
@@ -139,28 +177,28 @@ def test_get_singular():
         assert expected == get_singular(word)
 
 
-# def test_autokey_configs():
-#     # TODO: mock filesystem so none of this touches disk. oh well...
-#     create_autokey_config_for_abbrev("test_because", "bc")
-#     result_path = "output/autokey_phrases/"
-#     main_path = result_path + "test_because.txt"
-#     config_path = result_path + ".test_because.json"
+def test_autokey_configs():
+    # TODO: mock filesystem so none of this touches disk. oh well...
+    create_autokey_config_for_abbrev("test_because", "bc")
+    result_path = "output/autokey_phrases/"
+    main_path = result_path + "testbecause.txt"
+    config_path = result_path + ".testbecause.json"
 
-#     with open(main_path, 'r') as f:
-#         out = f.readline()
-#         assert out == "test_because"
+    with open(main_path, 'r') as f:
+        out = f.readline()
+        assert out == "test_because"
 
-#     with open(config_path, 'r') as f:
-#         out = json.load(f)
-#         expected = {'usageCount': 0, 'omitTrigger': False,
-#             'prompt': False, 'description': 'test_because', 'abbreviation':
-#             {'wordChars': "[\\w']", 'abbreviations': ['bc'], 'immediate': False,
-#             'ignoreCase': True, 'backspace': True, 'triggerInside': False},
-#             'hotkey': {'hotKey': None, 'modifiers': []}, 'modes': [1],
-#             'showInTrayMenu': False, 'matchCase': True, 'filter':
-#             {'regex': 'google-chrome.Google-chrome', 'isRecursive': False},
-#             'type': 'phrase', 'sendMode': 'kb'}
-#         assert out == expected
+    with open(config_path, 'r') as f:
+        out = json.load(f)
+        expected = {'usageCount': 0, 'omitTrigger': False,
+            'prompt': False, 'description': 'test_because', 'abbreviation':
+            {'wordChars': "[\\w'&-]", 'abbreviations': ['bc'], 'immediate': False,
+            'ignoreCase': True, 'backspace': True, 'triggerInside': False},
+            'hotkey': {'hotKey': None, 'modifiers': []}, 'modes': [1],
+            'showInTrayMenu': False, 'matchCase': True, 'filter':
+            {'regex': 'google-chrome.Google-chrome', 'isRecursive': False},
+            'type': 'phrase', 'sendMode': 'kb'}
+        assert out == expected
 
-#     os.remove(main_path)
-#     os.remove(config_path)
+    os.remove(main_path)
+    os.remove(config_path)
