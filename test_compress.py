@@ -202,7 +202,7 @@ def test_autokey_configs():
         out = json.load(f)
         expected = {'usageCount': 0, 'omitTrigger': False,
             'prompt': False, 'description': 'test_because', 'abbreviation':
-            {'wordChars': "[\\w'&-]", 'abbreviations': ['bc'], 'immediate': False,
+            {'wordChars': "[\\w'&-@]", 'abbreviations': ['bc'], 'immediate': False,
             'ignoreCase': True, 'backspace': True, 'triggerInside': False},
             'hotkey': {'hotKey': None, 'modifiers': []}, 'modes': [1],
             'showInTrayMenu': False, 'matchCase': True, 'filter':
