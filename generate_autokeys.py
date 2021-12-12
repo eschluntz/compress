@@ -18,6 +18,10 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
 
     result_path = "output/autokey_phrases/"
     filter_regex = "google-chrome.Google-chrome"  # shortcut only in these apps
+    words_regex = "[\\w\\n\\t'-]"  # what should not trigger a substitution
+
+    # has any capitals in phrase
+    has_capitals = any(c.isupper() for c in phrase)
 
     name = make_safe_filename_from_string(phrase)
 
@@ -31,12 +35,12 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
             "prompt": False,
             "description": phrase,
             "abbreviation": {
-                "wordChars": "[\\w'&-@]",  # don't trigger
+                "wordChars": words_regex,
                 "abbreviations": [
                     abbrev
                 ],
                 "immediate": False,
-                "ignoreCase": True,
+                "ignoreCase": not has_capitals,
                 "backspace": True,
                 "triggerInside": False
             },

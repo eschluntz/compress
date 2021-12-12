@@ -267,7 +267,7 @@ def fix_grammer(text: str) -> str:
 
 def save_shortcuts(shortcuts: Dict[str, str]) -> None:
     """Save the shortcuts to a yaml file"""
-    with open("output/shortcuts.yaml", 'w') as f:
+    with open("output/suggested_shortcuts.yaml", 'w') as f:
         yaml.dump(shortcuts, f, default_flow_style=False)
 
 
@@ -276,6 +276,9 @@ if __name__ == "__main__":
     texts = load_corpus()
     all_counts = corpus_to_ngrams(texts, 3)
     top_results = get_top_shortcuts(all_counts, 200)
+
+    for results in top_results:
+        print(f"{results[1]:20}:\t{results[0]:6} score\t{results[3]} times")
 
     shortcuts = match_abbrevs_to_phrases(top_results, BLACKLIST, PRESET_ABBREVS)
 
