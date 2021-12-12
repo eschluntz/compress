@@ -1,5 +1,6 @@
 import json
 import yaml
+import os
 
 
 def make_safe_filename_from_string(s : str) -> str:
@@ -18,12 +19,14 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
 
     result_path = "output/autokey_phrases/"
     filter_regex = "google-chrome.Google-chrome"  # shortcut only in these apps
-    words_regex = "[\\w\\n\\t'-]"  # what should not trigger a substitution
+    words_regex = "[\\w\\t'-]"  # what should not trigger a substitution
 
     # has any capitals in phrase
     has_capitals = any(c.isupper() for c in phrase)
 
     name = make_safe_filename_from_string(phrase)
+
+    os.makedirs(result_path, exist_ok=True)
 
     with open(result_path + f"{name}.txt", 'w') as f:
         f.write(phrase)
@@ -52,7 +55,7 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
                 1
             ],
             "showInTrayMenu": False,
-            "matchCase": True,
+            "matchCase": not has_capitals,
             "filter": {
                 "regex": filter_regex,
                 "isRecursive": False
