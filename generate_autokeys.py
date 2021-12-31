@@ -19,7 +19,7 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
 
     result_path = "output/autokey_phrases/"
     filter_regex = "google-chrome.Google-chrome"  # shortcut only in these apps
-    words_regex = "[\\w\\t'-]"  # what should not trigger a substitution
+    words_regex = "[\\w\\t'\-&\+]"  # what should not trigger a substitution
 
     # has any capitals in phrase
     has_capitals = any(c.isupper() for c in phrase)

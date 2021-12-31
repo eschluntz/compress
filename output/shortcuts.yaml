@@ -36,8 +36,8 @@ anything else: aye
 back: bk
 be able to: bat
 because: b
-before: bef
 between: bn
+before: bf
 bottom board: bb
 bottom boards: bbs
 but: u
@@ -125,8 +125,8 @@ on the robot: otr
 or something: ost
 other: o
 others: os
+password: pw
 people: ppl
-peoples: ppls
 please: pe
 pleases: pes
 possible: po
@@ -143,6 +143,7 @@ right: rt
 right now: rn
 robot: r
 robots: rs
+robotics: rbs
 running: rg
 screenshot: sc
 see if: si
