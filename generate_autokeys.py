@@ -67,7 +67,7 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
 
 
 if __name__ == "__main__":
-    shortcuts = yaml.load(open("output/shortcuts.yaml", 'r'))
+    shortcuts = yaml.load(open("output/shortcuts.yaml", 'r'), Loader=yaml.FullLoader)
 
     for phrase, abbrev in shortcuts.items():
         create_autokey_config_for_abbrev(phrase, abbrev)
