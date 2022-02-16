@@ -160,6 +160,7 @@ robotics: rbs
 running: rg
 screenshot: sc
 see if: si
+separate: sep
 should: sd
 should be: sdb
 software: sw
