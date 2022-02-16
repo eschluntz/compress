@@ -5,3 +5,4 @@ data/
 .coverage
 htmlcov/
 output/autokey_phrases/
+.python-version
