@@ -206,6 +206,28 @@ def test_autokey_configs():
             'ignoreCase': True, 'backspace': True, 'triggerInside': False},
             'hotkey': {'hotKey': None, 'modifiers': []}, 'modes': [1],
             'showInTrayMenu': False, 'matchCase': True, 'filter':
+            {'regex': '*', 'isRecursive': False},
+            'type': 'phrase', 'sendMode': 'kb'}
+        assert out == expected
+
+    # some are only set to work in chrome, to avoid coding mistakes
+    create_autokey_config_for_abbrev("test_i", "i")
+    result_path = "output/autokey_phrases/"
+    main_path = result_path + "testi.txt"
+    config_path = result_path + ".testi.json"
+
+    with open(main_path, 'r') as f:
+        out = f.readline()
+        assert out == "test_i"
+
+    with open(config_path, 'r') as f:
+        out = json.load(f)
+        expected = {'usageCount': 0, 'omitTrigger': False,
+            'prompt': False, 'description': 'test_i', 'abbreviation':
+            {'wordChars': "[\\w\\t'\-&\+]", 'abbreviations': ['i'], 'immediate': False,
+            'ignoreCase': True, 'backspace': True, 'triggerInside': False},
+            'hotkey': {'hotKey': None, 'modifiers': []}, 'modes': [1],
+            'showInTrayMenu': False, 'matchCase': True, 'filter':
             {'regex': 'google-chrome.Google-chrome', 'isRecursive': False},
             'type': 'phrase', 'sendMode': 'kb'}
         assert out == expected

@@ -13,13 +13,27 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
     """Generate configs for Autokey based on an abbreviation.
     https://github.com/autokey/autokey
 
+    abbrev can be a string, or a comma separated list of abbreviations.
+
     these files go in ~/.config/autokey/data/My Phrases/
 
     Each abbrev gets two files, name.txt and .name.json"""
 
+    file_extensions = ["py"]  # add . as a word character for any of these abbrevs.
+    if abbrev in file_extensions:
+        extra_word_chars = "\."
+    else:
+        extra_word_chars = ""
+    words_regex = "[\\w\\t'{}\-&\+]".format(extra_word_chars)  # what should not trigger a substitution
+
     result_path = "output/autokey_phrases/"
-    filter_regex = "google-chrome.Google-chrome"  # shortcut only in these apps
-    words_regex = "[\\w\\t'\-&\+]"  # what should not trigger a substitution
+
+    # only use common coding terms in google
+    is_coding_term = len(abbrev) == 1 or abbrev in ["ls", "st", "b", "bb", "cd", "dt", "os", "rs", "ad"]
+    if is_coding_term:
+        filter_regex = "google-chrome.Google-chrome"  # shortcut only in these apps
+    else:
+        filter_regex = "*"
 
     # has any capitals in phrase
     has_capitals = any(c.isupper() for c in phrase)
@@ -27,6 +41,8 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
     name = make_safe_filename_from_string(phrase)
 
     os.makedirs(result_path, exist_ok=True)
+
+    abbrevs = [a.strip() for a in abbrev.split(",")]
 
     with open(result_path + f"{name}.txt", 'w') as f:
         f.write(phrase)
@@ -39,9 +55,7 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
             "description": phrase,
             "abbreviation": {
                 "wordChars": words_regex,
-                "abbreviations": [
-                    abbrev
-                ],
+                "abbreviations": abbrevs,
                 "immediate": False,
                 "ignoreCase": not has_capitals,
                 "backspace": True,

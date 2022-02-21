@@ -11,6 +11,7 @@ Can you post a screenshot?: csc
 I: i
 I can: ic
 I don't think: idt
+I'm going to: igt
 I think: itk
 I think that: itt
 I'll keep you posted: ikyp
@@ -29,6 +30,9 @@ again: ag
 already: al
 also: ao
 and: n
+# todo: htem
+# todo: fix .py issue
+# todo: allow most in vscode?
 and I: ni
 and the: nt
 and then: ntn
@@ -198,7 +202,7 @@ the robot: tr
 the robots: trs
 the specialists: tsps
 the wifibox: twb
-them: tm
+them: "tm, htem"
 then: tn
 there: te
 theres: ths
