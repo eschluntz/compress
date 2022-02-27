@@ -28,12 +28,7 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
 
     result_path = "output/autokey_phrases/"
 
-    # only use common coding terms in google
-    is_coding_term = len(abbrev) == 1 or abbrev in ["ls", "st", "b", "bb", "cd", "dt", "os", "rs", "ad"]
-    if is_coding_term:
-        filter_regex = "google-chrome.Google-chrome"  # shortcut only in these apps
-    else:
-        filter_regex = "*"
+    filter_regex = "google-chrome.Google-chrome"  # shortcut only in these apps
 
     # has any capitals in phrase
     has_capitals = any(c.isupper() for c in phrase)
