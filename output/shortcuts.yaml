@@ -70,6 +70,7 @@ different: d
 do you: dy
 do you know: dyk
 do you think: dytk
+doing: dg
 what do you think: wdytk
 doesn't: doe
 don't: dt
@@ -93,7 +94,6 @@ getting: gg
 going: g
 going to: gt
 good: gd
-great: gt
 hardware: hw
 have: h
 have a: ha
@@ -108,6 +108,7 @@ just: j
 know: k
 let me: lm
 let me know: lmk
+let me know if it would be helpful: lmh
 like: l
 like the: lt
 likes: ls
@@ -240,7 +241,6 @@ whats: wts
 when: wn
 whens: wns
 where: whe
-wheres: whes
 which: wh
 wifibox: wb
 wifiboxes: wbs
@@ -249,7 +249,6 @@ will be: wlb
 wills: wls
 with: w
 with the: wt
-withes: ws
 without: wo
 working: wg
 working on: wgo
