@@ -93,6 +93,7 @@ from: fm
 from the: fmt
 frontend: fe
 getting: gg
+give me a call: gmac
 going: g
 going to: gt
 good: gd
@@ -238,11 +239,13 @@ we need to: wndt
 we should: wsd
 week: wk
 what: wt
-whats: wts
+whatever: wte
 when: wn
-whens: wns
-where: whe
+whenever: wne
+where: wr
+wherever: wre
 which: wh
+whichever: whe
 wifibox: wb
 wifiboxes: wbs
 will: wl
