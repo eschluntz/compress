@@ -68,6 +68,7 @@ customers: crs
 debugging: db
 definitely: def
 different: d
+doing: dg
 do you: dy
 do you know: dyk
 do you think: dytk
@@ -191,7 +192,7 @@ that the: ttt
 that we: ttw
 that would: ttwd
 that's: tts
-the: t
+the: "t, teh, hte"
 the bottom board: tbb
 the dock: td
 the elevator: tel
@@ -205,10 +206,9 @@ the wifibox: twb
 them: "tm, htem"
 then: tn
 there: te
-theres: ths
+there's: ths
 these: tse
-theses: tses
-they: ty
+they: "ty, htey"
 thing: thi
 think: tk
 think about: ta
