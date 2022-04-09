@@ -19,6 +19,7 @@ I vaguely remember: ivr
 'You can pick a time for us to chat here: https://calendly.com/eschluntz/30min': cal30
 'You can pick a time for us to chat here: https://calendly.com/eschluntz/45min': cal45
 'You can pick a time for us to chat here: https://calendly.com/eschluntz/60min': cal60
+I'm: im
 a different: ad
 a few: af
 a look: alk
@@ -52,8 +53,6 @@ bandwidth: bw
 calendar invite: cali
 can: c
 can you: cy
-change: ce
-changes: ces
 check: ck
 checks: cks
 cobalt: ct
@@ -130,6 +129,8 @@ mores: mos
 my guess is: mgi
 need: nd
 need to: ndt
+needing: ndg
+needing to: ndgt
 needs: nds
 needed: ndd
 no worries: nw
