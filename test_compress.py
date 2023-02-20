@@ -206,7 +206,7 @@ def test_autokey_configs():
             'ignoreCase': True, 'backspace': True, 'triggerInside': False},
             'hotkey': {'hotKey': None, 'modifiers': []}, 'modes': [1],
             'showInTrayMenu': False, 'matchCase': True, 'filter':
-            {'regex': '*', 'isRecursive': False},
+            {'regex': 'google-chrome.Google-chrome', 'isRecursive': False},
             'type': 'phrase', 'sendMode': 'kb'}
         assert out == expected
 
