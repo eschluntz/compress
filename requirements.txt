@@ -1,6 +1,10 @@
+# build
 pytest
+pylint
 coverage
 codecov
+
+# run
 nltk
 pyenchant
 pyyaml
