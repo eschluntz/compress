@@ -8,6 +8,8 @@ import os
 import re
 from typing import List
 
+USERNAME_TO_EXPORT = "erik"
+
 
 def extract_slack_msgs(export_root_path : str, username : str) -> List[str]:
     """extract all text from the users messages as a list of strings"""
@@ -47,7 +49,7 @@ def clean_slack_msg(text: str) -> str:
 
 if __name__ == "__main__":
     slack_export_root = "data/slack_export"
-    msgs = extract_slack_msgs(slack_export_root, "erik")
+    msgs = extract_slack_msgs(slack_export_root, USERNAME_TO_EXPORT)
 
     # clean up msgs
     texts = [clean_slack_msg(m) for m in msgs]

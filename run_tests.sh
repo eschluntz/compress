@@ -1,4 +1,5 @@
-## Unified script to run identical checks locally and in CI
+#!/bin/bash
+# Unified script to run identical checks locally and in CI
 
 # exit when any command fails
 set -e
