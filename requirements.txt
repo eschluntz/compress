@@ -3,6 +3,7 @@ pytest
 pylint
 coverage
 codecov
+pytest-cov
 
 # run
 nltk

@@ -8,4 +8,4 @@ set -e
 # pylint $(git ls-files '*.py')
 
 # tests
-pytest
+pytest --cov

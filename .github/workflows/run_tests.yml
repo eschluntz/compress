@@ -29,3 +29,5 @@ jobs:
     - name: Run linters and tests
       run: |
         ./run_tests.sh
+    - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
