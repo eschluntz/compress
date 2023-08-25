@@ -1,7 +1,12 @@
+#!/usr/bin/env python
 
-# Abbrevs you definitely want in your set.
-# you can set None if you want to pick one automatically
-# you're responsible for creating any plurals here
+"""
+Abbrevs you definitely want in your set.
+you can set None if you want to pick one automatically
+you're responsible for creating any plurals here
+"""
+
+
 PRESET_ABBREVS = {
     "right now": "rn",
     "ansible": "ans",

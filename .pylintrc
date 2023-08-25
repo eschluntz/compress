@@ -337,7 +337,7 @@ indent-after-paren=4
 indent-string='    '
 
 # Maximum number of characters on a single line.
-max-line-length=100
+max-line-length=120
 
 # Maximum number of lines in a module.
 max-module-lines=1000
@@ -429,7 +429,15 @@ disable=raw-checker-failed,
         useless-suppression,
         deprecated-pragma,
         use-symbolic-message-instead,
-        missing-function-docstring
+        missing-function-docstring,
+        fixme,
+        no-else-return,
+        invalid-name,
+        redefined-outer-name,
+        too-many-locals,  # TODO: remove these next 3 after refactoring match_abbrevs_to_phrases
+        too-many-branches,
+        too-many-nested-blocks
+
 
 
 # Enable the message, report, category or checker with the given id(s). You can

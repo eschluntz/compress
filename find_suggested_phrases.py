@@ -1,4 +1,10 @@
-import json
+#!/usr/bin/env python
+
+"""
+Script to turn a corpus of text into a list of suggested phrases
+and abbreviations.
+"""
+
 import os
 from typing import List, Dict, Optional, Set, Tuple
 from collections import Counter, namedtuple
@@ -67,14 +73,8 @@ def try_plural_of_word(word : str) -> str:
         return word[:-1] + "ies"
     if word[-1] == "f":
         return word[:-1] + "ves"
-    if word[-1] == "o":
+    if word[-1] in "ohxz":
         return word + "es"
-    if word[-1] == "h":
-        return word + "es"
-    if word[-1] == "x":
-        return word + "es"
-    if word[-1] == "z":
-        return word[:-1] + "zes"
     return word + "s"
 
 
@@ -219,7 +219,7 @@ def load_corpus() -> List[str]:
     all_lines = []
     for filename in os.listdir(corpus_path):
         if filename.endswith(".txt"):
-            with open(corpus_path + filename, 'r') as f:
+            with open(corpus_path + filename, 'r', encoding="utf8") as f:
                 all_lines.extend(f.readlines())
     return all_lines
 
@@ -267,7 +267,7 @@ def fix_grammer(text: str) -> str:
 
 def save_shortcuts(shortcuts: Dict[str, str]) -> None:
     """Save the shortcuts to a yaml file"""
-    with open("output/suggested_shortcuts.yaml", 'w') as f:
+    with open("output/suggested_shortcuts.yaml", 'w', encoding="utf8") as f:
         yaml.dump(shortcuts, f, default_flow_style=False)
 
 

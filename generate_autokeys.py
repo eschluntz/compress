@@ -1,6 +1,13 @@
+#!/usr/bin/env python
+
+"""
+Script to turn the json file of shortcuts.yaml into config files for Autokey
+"""
+
+
 import json
-import yaml
 import os
+import yaml
 
 
 def make_safe_filename_from_string(s : str) -> str:
@@ -21,10 +28,10 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
 
     file_extensions = ["py"]  # add . as a word character for any of these abbrevs.
     if abbrev in file_extensions:
-        extra_word_chars = "\."
+        extra_word_chars = r"\."
     else:
         extra_word_chars = ""
-    words_regex = "[\\w\\t'{}\-&\+]".format(extra_word_chars)  # what should not trigger a substitution
+    words_regex = rf"[\w\t'{extra_word_chars}\-&\+]"  # what should not trigger a substitution
 
     result_path = "output/autokey_phrases/"
 
@@ -39,10 +46,10 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
 
     abbrevs = [a.strip() for a in abbrev.split(",")]
 
-    with open(result_path + f"{name}.txt", 'w') as f:
+    with open(result_path + f"{name}.txt", 'w', encoding="utf8") as f:
         f.write(phrase)
 
-    with open(result_path + f".{name}.json", 'w') as f:
+    with open(result_path + f".{name}.json", 'w', encoding="utf8") as f:
         config = {
             "usageCount": 0,
             "omitTrigger": False,
@@ -76,7 +83,9 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
 
 
 if __name__ == "__main__":
-    shortcuts = yaml.load(open("output/shortcuts.yaml", 'r'), Loader=yaml.FullLoader)
 
-    for phrase, abbrev in shortcuts.items():
-        create_autokey_config_for_abbrev(phrase, abbrev)
+    with open("output/shortcuts.yaml", 'r', encoding="utf8") as file:
+        shortcuts = yaml.load(file, Loader=yaml.FullLoader)
+
+        for phrase, abbrev in shortcuts.items():
+            create_autokey_config_for_abbrev(phrase, abbrev)

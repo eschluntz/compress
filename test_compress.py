@@ -1,7 +1,13 @@
+#!/usr/bin/env python
 
+"""
+Tests for the compress repo. This is best executed from `run_tests.sh`
+in order to keep parity with what's running in CI.
+"""
+import json
 from typing import Counter
-from preset_abbrevs import BLACKLIST, PRESET_ABBREVS
-from parse_slack import extract_slack_msgs, clean_slack_msg
+import os
+
 from find_suggested_phrases import (
     get_plural,
     get_possible_abbrevs,
@@ -13,8 +19,9 @@ from find_suggested_phrases import (
     fix_grammer,
 )
 from generate_autokeys import create_autokey_config_for_abbrev
-import os
-import json
+from parse_slack import extract_slack_msgs, clean_slack_msg
+from preset_abbrevs import BLACKLIST, PRESET_ABBREVS
+
 
 
 def test_presets():
@@ -194,15 +201,15 @@ def test_autokey_configs():
     main_path = result_path + "testbecause.txt"
     config_path = result_path + ".testbecause.json"
 
-    with open(main_path, 'r') as f:
+    with open(main_path, 'r', encoding="utf8") as f:
         out = f.readline()
         assert out == "test_because"
 
-    with open(config_path, 'r') as f:
+    with open(config_path, 'r', encoding="utf8") as f:
         out = json.load(f)
         expected = {'usageCount': 0, 'omitTrigger': False,
             'prompt': False, 'description': 'test_because', 'abbreviation':
-            {'wordChars': "[\\w\\t'\-&\+]", 'abbreviations': ['bc'], 'immediate': False,
+            {'wordChars': r"[\w\t'\-&\+]", 'abbreviations': ['bc'], 'immediate': False,
             'ignoreCase': True, 'backspace': True, 'triggerInside': False},
             'hotkey': {'hotKey': None, 'modifiers': []}, 'modes': [1],
             'showInTrayMenu': False, 'matchCase': True, 'filter':
@@ -216,15 +223,15 @@ def test_autokey_configs():
     main_path = result_path + "testi.txt"
     config_path = result_path + ".testi.json"
 
-    with open(main_path, 'r') as f:
+    with open(main_path, 'r', encoding="utf8") as f:
         out = f.readline()
         assert out == "test_i"
 
-    with open(config_path, 'r') as f:
+    with open(config_path, 'r', encoding="utf8") as f:
         out = json.load(f)
         expected = {'usageCount': 0, 'omitTrigger': False,
             'prompt': False, 'description': 'test_i', 'abbreviation':
-            {'wordChars': "[\\w\\t'\-&\+]", 'abbreviations': ['i'], 'immediate': False,
+            {'wordChars': r"[\w\t'\-&\+]", 'abbreviations': ['i'], 'immediate': False,
             'ignoreCase': True, 'backspace': True, 'triggerInside': False},
             'hotkey': {'hotKey': None, 'modifiers': []}, 'modes': [1],
             'showInTrayMenu': False, 'matchCase': True, 'filter':

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 Parses a slack export folder, cleans up the slack messages found for your user
 and then exports them into a file in corpus.
@@ -14,12 +16,12 @@ USERNAME_TO_EXPORT = "erik"
 def extract_slack_msgs(export_root_path : str, username : str) -> List[str]:
     """extract all text from the users messages as a list of strings"""
     file_strs : List[str] = []
-    for (dirpath, dirnames, filenames) in os.walk(export_root_path):
+    for (dirpath, _, filenames) in os.walk(export_root_path):
         file_strs += [os.path.join(dirpath, file) for file in filenames]
 
     msgs : List[str] = []
     for file_str in file_strs:
-        with open(file_str) as file:
+        with open(file_str, encoding="utf8") as file:
             channel = json.load(file)
 
         for msg in channel:
@@ -55,6 +57,6 @@ if __name__ == "__main__":
     texts = [clean_slack_msg(m) for m in msgs]
 
     # write each msg as a line to a file
-    with open("data/corpus/slack_msgs.txt", 'w') as f:
+    with open("data/corpus/slack_msgs.txt", 'w', encoding="utf8") as f:
         for text in texts:
             f.write(text + "\n")

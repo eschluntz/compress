@@ -4,8 +4,8 @@
 # exit when any command fails
 set -e
 
-# linter
-# pylint $(git ls-files '*.py')
-
 # tests
 pytest --cov
+
+# linter
+pylint $(git ls-files '*.py')
