@@ -1,4 +1,3 @@
-Anything else I can help with?: ayel
 ? 'Best,
 
   - Erik'
@@ -11,10 +10,12 @@ Can you post a screenshot?: csc
 I: i
 I can: ic
 I don't think: idt
-I'm going to: igt
+I don't know: idk
 I think: itk
 I think that: itt
+I'll: ill
 I'll keep you posted: ikyp
+I'm going to: igt
 I vaguely remember: ivr
 'You can pick a time for us to chat here: https://calendly.com/eschluntz/30min': cal30
 'You can pick a time for us to chat here: https://calendly.com/eschluntz/45min': cal45
@@ -31,9 +32,6 @@ again: ag
 already: al
 also: ao
 and: n
-# todo: htem
-# todo: fix .py issue
-# todo: allow most in vscode?
 and I: ni
 and the: nt
 and then: ntn
@@ -57,7 +55,6 @@ can you: cy
 check: ck
 checks: cks
 cobalt: ct
-cobalt cobalt code: ctctc
 computer: co
 computers: cos
 connection: cn
@@ -72,7 +69,6 @@ doing: dg
 do you: dy
 do you know: dyk
 do you think: dytk
-doing: dg
 what do you think: wdytk
 doesn't: doe
 don't: dt
@@ -81,8 +77,6 @@ elevator: el
 elevators: els
 e.g.: eg
 i.e.: ie
-erik@cobaltrobotics.com: ecc
-eschluntz@gmail.com: egc
 especially: esp
 in the: ih
 every: ev
@@ -91,6 +85,7 @@ everything: et
 eventually: ey
 feedback: fb
 for: f
+for the: ft
 from: fm
 from the: fmt
 frontend: fe
@@ -99,6 +94,7 @@ give me a call: gmac
 going: g
 going to: gt
 good: gd
+great: gr
 hardware: hw
 have: h
 have a: ha
@@ -116,8 +112,6 @@ let me know: lmk
 let me know if it would be helpful: lmh
 like: l
 like the: lt
-likes: ls
-localization: z
 look: lk
 looks: lks
 looks like: ll
@@ -128,15 +122,12 @@ meeting: mtg
 meetings: mtgs
 might: m
 more: mo
-mores: mos
 my guess is: mgi
 necessary: nc
 necessarily: ncy
 not necessarily: nn
 need: nd
 need to: ndt
-needing: ndg
-needing to: ndgt
 needs: nds
 needed: ndd
 no worries: nw
@@ -150,9 +141,7 @@ password: pw
 passwords: pws
 people: ppl
 please: pe
-pleases: pes
 possible: po
-possibles: pos
 pretty: py
 pretty much: pym
 probably: p
@@ -180,7 +169,6 @@ should be: sdb
 software: sw
 software release: swrel
 some: s
-some of: sof
 some of the: sot
 someone: sn
 something: st
@@ -193,25 +181,17 @@ seems like: sl
 sounds good: sg
 taking a look: tal
 testing: tg
-testings: tgs
-thank: th
-thanks: ths
+thanks: th
 that: tt
 that the: ttt
 that we: ttw
 that would: ttwd
 that's: tts
 the: "t, teh, hte"
-the bottom board: tbb
-the dock: td
-the elevator: tel
 the new: tn
 the problem: tpm
-the release: trel
 the robot: tr
 the robots: trs
-the specialists: tsps
-the wifibox: twb
 them: "tm, htem"
 then: tn
 there: te
@@ -258,7 +238,6 @@ wifibox: wb
 wifiboxes: wbs
 will: wl
 will be: wlb
-wills: wls
 with: w
 without: wo
 working: wg
@@ -271,4 +250,3 @@ yeah: yh
 you: y
 you need: ynd
 you think: ytk
-yous: ys
