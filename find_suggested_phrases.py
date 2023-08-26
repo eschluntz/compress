@@ -83,18 +83,18 @@ def match_abbrevs_to_phrases(results: List[tuple], presets : Dict[str, str]) -> 
     return shortcut_dict
 
 
-def load_corpus() -> List[str]:
+def load_corpus(corpus_path="data/corpus/") -> List[str]:
     """Load all txt files under data/corpus, and return as a list of strings"""
-    corpus_path = "data/corpus/"
     all_lines = []
     found_data = False
     for filename in os.listdir(corpus_path):
         if filename.endswith(".txt"):
             found_data = True
-            with open(corpus_path + filename, 'r', encoding="utf8") as f:
+            with open(os.path.join(corpus_path, filename), 'r', encoding="utf8") as f:
                 all_lines.extend(f.readlines())
     if not found_data:
         print("Warning: No txt files found in data/corpus/")
+    all_lines = [line.strip() for line in all_lines]
     return all_lines
 
 

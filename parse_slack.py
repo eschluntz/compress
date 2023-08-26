@@ -33,7 +33,7 @@ def extract_slack_msgs(export_root_path : str, username : str) -> List[str]:
                 continue
 
             if user == username:
-                msgs.append(text)
+                msgs.append(clean_slack_msg(text))
     return msgs
 
 
@@ -51,10 +51,7 @@ def clean_slack_msg(text: str) -> str:
 
 if __name__ == "__main__":
     slack_export_root = "data/slack_export"
-    msgs = extract_slack_msgs(slack_export_root, USERNAME_TO_EXPORT)
-
-    # clean up msgs
-    texts = [clean_slack_msg(m) for m in msgs]
+    texts = extract_slack_msgs(slack_export_root, USERNAME_TO_EXPORT)
 
     # write each msg as a line to a file
     with open("data/corpus/slack_msgs.txt", 'w', encoding="utf8") as f:

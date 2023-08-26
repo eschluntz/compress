@@ -46,10 +46,10 @@ def create_autokey_config_for_shortcut(phrase : str, abbrev : str) -> None:
 
     abbrevs = [a.strip() for a in abbrev.split(",")]
 
-    with open(result_path + f"{name}.txt", 'w', encoding="utf8") as f:
+    with open(os.path.join(result_path, f"{name}.txt"), 'w', encoding="utf8") as f:
         f.write(phrase)
 
-    with open(result_path + f".{name}.json", 'w', encoding="utf8") as f:
+    with open(os.path.join(result_path, f".{name}.json"), 'w', encoding="utf8") as f:
         config = {
             "usageCount": 0,
             "omitTrigger": False,

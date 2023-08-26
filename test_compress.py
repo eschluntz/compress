@@ -14,6 +14,7 @@ from find_suggested_phrases import (
     match_abbrevs_to_phrases,
     corpus_to_ngrams,
     fix_grammer,
+    load_corpus
 )
 from generate_autokeys import create_autokey_config_for_shortcut
 from parse_slack import extract_slack_msgs, clean_slack_msg
@@ -26,8 +27,8 @@ def test_presets():
 
 
 def test_extract_slack_msgs():
-    output = extract_slack_msgs("test_export", "erik")
-    assert output == ["test_msg_1", "test with words"]
+    output = extract_slack_msgs("test_data/test_slack_export", "erik")
+    assert output == ["test msg 1", "test with words"]
 
 
 def test_clean_slack_msg():
@@ -135,6 +136,12 @@ def test_corpus_to_n_grams():
         ("goodbye", "world"): 1,
     })
     assert expected == out
+
+
+def test_load_corpus():
+    all_lines = load_corpus("test_data/test_corpus/")
+    expected = ["hello world", "testing", "also here"]
+    assert all_lines == expected
 
 
 def test_fix_grammer():
