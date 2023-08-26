@@ -15,7 +15,7 @@ from find_suggested_phrases import (
     corpus_to_ngrams,
     fix_grammer,
 )
-from generate_autokeys import create_autokey_config_for_abbrev
+from generate_autokeys import create_autokey_config_for_shortcut
 from parse_slack import extract_slack_msgs, clean_slack_msg
 from preset_abbrevs import BLACKLIST
 
@@ -148,7 +148,7 @@ def test_fix_grammer():
 
 def test_autokey_configs():
     # TODO: mock filesystem so none of this touches disk. oh well...
-    create_autokey_config_for_abbrev("test_because", "bc")
+    create_autokey_config_for_shortcut("test_because", "bc")
     result_path = "output/autokey_phrases/"
     main_path = result_path + "testbecause.txt"
     config_path = result_path + ".testbecause.json"
@@ -170,7 +170,7 @@ def test_autokey_configs():
         assert out == expected
 
     # some are only set to work in chrome, to avoid coding mistakes
-    create_autokey_config_for_abbrev("test_i", "i")
+    create_autokey_config_for_shortcut("test_i", "i")
     result_path = "output/autokey_phrases/"
     main_path = result_path + "testi.txt"
     config_path = result_path + ".testi.json"

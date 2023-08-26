@@ -56,7 +56,8 @@ PRESET_ABBREVS = {
     "Can you post a screenshot?": "csc",
 }
 
-# these will not be used as abbrevs
+# these will not be used as abbrevs.
+# TODO: these could be taken directly from the corpus
 BLACKLIST = set([
     "a", "ai", "alt", "i", "id", "it", "an", "int", "so",
     "is", "re", "we", "the", "in", "as",

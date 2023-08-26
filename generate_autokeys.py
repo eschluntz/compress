@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Script to turn the json file of shortcuts.yaml into config files for Autokey
+Script to turn the json file of output/shortcuts.yaml into config files for Autokey
 """
 
 
@@ -16,8 +16,8 @@ def make_safe_filename_from_string(s : str) -> str:
     return "".join(x.lower() for x in s if x.isalnum())
 
 
-def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
-    """Generate configs for Autokey based on an abbreviation.
+def create_autokey_config_for_shortcut(phrase : str, abbrev : str) -> None:
+    """Generate configs for Autokey based on a shortcut from phrase to abbreviation.
     https://github.com/autokey/autokey
 
     abbrev can be a string, or a comma separated list of abbreviations.
@@ -26,7 +26,7 @@ def create_autokey_config_for_abbrev(phrase : str, abbrev : str) -> None:
 
     Each abbrev gets two files, name.txt and .name.json"""
 
-    file_extensions = ["py"]  # add . as a word character for any of these abbrevs.
+    file_extensions = ["py"]  # add '.' as a word character for any of these abbrevs.
     if abbrev in file_extensions:
         extra_word_chars = r"\."
     else:
@@ -88,4 +88,4 @@ if __name__ == "__main__":
         shortcuts = yaml.load(file, Loader=yaml.FullLoader)
 
         for phrase, abbrev in shortcuts.items():
-            create_autokey_config_for_abbrev(phrase, abbrev)
+            create_autokey_config_for_shortcut(phrase, abbrev)

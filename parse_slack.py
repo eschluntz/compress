@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Parses a slack export folder, cleans up the slack messages found for your user
+Parses a slack export folder (data/slack_export/), cleans up the slack messages found for your user
 and then exports them into a file in corpus.
 """
 
