@@ -2,11 +2,17 @@
 
 """
 Script to turn a corpus of text into a list of suggested phrases
-and abbreviations.
+and abbreviations. 
+
+Reads data from data/corpus/*.txt
+Outputs suggested abbreviations to output/suggested_shortcuts.yaml
+
+Terminology:
+a 'Shortcut' is a joint 'Phrase' and 'Abbreviation'.
 """
 
 import os
-from typing import List, Dict, Set, Tuple
+from typing import List, Dict, Tuple
 from collections import Counter, namedtuple
 from nltk.util import ngrams
 import yaml
@@ -45,54 +51,58 @@ def get_possible_abbrevs(phrase: str) -> List[str]:
     return out
 
 
-def match_abbrevs_to_phrases(results: List[tuple], blacklist : Set[str], presets : Dict[str, str]) -> Dict[str, str]:
-    """Find the best abbreviation for each phrase.
+def match_abbrevs_to_phrases(results: List[tuple], presets : Dict[str, str]) -> Dict[str, str]:
+    """Find the best abbreviation for each phrase without overlap.
+
     Returns a dict of phrase -> abbrev, i.e. {'because': 'bc'}.
 
     Highest scoring phrases get priority for most memorable shortcuts.
     """
     # start with the presets and blacklist
-    abbrev_set = blacklist
-    shortcuts = presets
-    for _, v in shortcuts.items():
+    abbrev_set = BLACKLIST
+    shortcut_dict = presets
+    for _, v in shortcut_dict.items():
         abbrev_set.add(v)
 
     for row in results:
-        phrase = row[1]
+        score, phrase = row[0], row[1]
 
-        # anything in the presets already just don't touch
-        if phrase in shortcuts:
+        # skip anything already in the presets
+        if phrase in shortcut_dict:
             continue
 
         posssible_abbrevs = get_possible_abbrevs(phrase)
-        for abbrev in posssible_abbrevs:  # ordered best to worst
+        for abbrev in posssible_abbrevs:  # ordered best to worst, so we can take the firs that works
             if abbrev not in abbrev_set and len(abbrev) < len(phrase) - 1:  # save at least two chars
                 abbrev_set.add(abbrev)
-                shortcuts[phrase] = abbrev
+                shortcut_dict[phrase] = abbrev
                 break
         else:
-            print(f"warning, no abbrev for {phrase} with score {row[0]}")
+            print(f"warning, no abbrev for {phrase} with score {score}")
 
-    return shortcuts
+    return shortcut_dict
 
 
 def load_corpus() -> List[str]:
     """Load all txt files under data/corpus, and return as a list of strings"""
     corpus_path = "data/corpus/"
     all_lines = []
+    found_data = False
     for filename in os.listdir(corpus_path):
         if filename.endswith(".txt"):
+            found_data = True
             with open(corpus_path + filename, 'r', encoding="utf8") as f:
                 all_lines.extend(f.readlines())
+    if not found_data:
+        print("Warning: No txt files found in data/corpus/")
     return all_lines
 
 
 def corpus_to_ngrams(corpus: List[str], max_n: int) -> Counter:
-    """Convert a corpus of strings into n-grams"""
-    # count N grams of several different Ns
+    """Convert a corpus of strings into a Counter of n-grams of various lengths"""
     all_counts = Counter()
-    for text in corpus:
-        tokenized = text.split()
+    for line in corpus:
+        tokenized = line.split()
         for n in range(1, max_n + 1):
             gram = ngrams(tokenized, n)
             all_counts.update(Counter(gram))
@@ -100,21 +110,21 @@ def corpus_to_ngrams(corpus: List[str], max_n: int) -> Counter:
     return all_counts
 
 
-def get_top_shortcuts(all_counts: Counter, n_to_keep: int) -> List[tuple]:
-    """Get the top n-grams from the ngrams counter"""
-    results : List[Tuple] = []
-    for k, count in all_counts.items():
+def get_best_phrases_to_shorten(phrase_counts: Counter, n_to_keep: int) -> List[tuple]:
+    """Get the best scoring phrases that should be shortened into abbreviations"""
+    phrase_data : List[Tuple] = []
+    for phrase_tuple, count in phrase_counts.items():
         if count <= 3:  # don't count rare but super long phrases
             continue
-        phrase = " ".join(k)
+        phrase = " ".join(phrase_tuple)
         phrase_len = len(phrase)
         avg_shortcut_len = 2
         score = (phrase_len - avg_shortcut_len) * count  # how many chars will be saved
-        results.append((score, phrase, phrase_len, count))
+        phrase_data.append((score, phrase, phrase_len, count))
 
-    results = sorted(results, reverse=True)
-    results = results[:n_to_keep]
-    return results
+    phrase_data = sorted(phrase_data, reverse=True)
+    phrase_data = phrase_data[:n_to_keep]
+    return phrase_data
 
 
 def fix_grammer(text: str) -> str:
@@ -138,12 +148,9 @@ if __name__ == "__main__":
 
     texts = load_corpus()
     all_counts = corpus_to_ngrams(texts, 4)
-    top_results = get_top_shortcuts(all_counts, 200)
+    top_results = get_best_phrases_to_shorten(all_counts, 200)
 
-    # for results in top_results:
-    #     print(f"{results[1]:20}:\t{results[0]:6} score\t{results[3]} times")
-
-    shortcuts = match_abbrevs_to_phrases(top_results, BLACKLIST, PRESET_ABBREVS)
+    shortcuts = match_abbrevs_to_phrases(top_results, PRESET_ABBREVS)
 
     final_results = []
     for phrase, abbrev in shortcuts.items():

@@ -10,14 +10,14 @@ import os
 
 from find_suggested_phrases import (
     get_possible_abbrevs,
-    get_top_shortcuts,
+    get_best_phrases_to_shorten,
     match_abbrevs_to_phrases,
     corpus_to_ngrams,
     fix_grammer,
 )
 from generate_autokeys import create_autokey_config_for_abbrev
 from parse_slack import extract_slack_msgs, clean_slack_msg
-from preset_abbrevs import BLACKLIST, PRESET_ABBREVS
+from preset_abbrevs import BLACKLIST
 
 
 def test_presets():
@@ -101,7 +101,7 @@ def test_match_abbrevs():
         'on the': 'ont'
      }
     presets = {"about": "ab", "and": "n", "i think": "itk"}
-    shortcuts = match_abbrevs_to_phrases(input_phrases, BLACKLIST, presets)
+    shortcuts = match_abbrevs_to_phrases(input_phrases, presets)
     assert expected == shortcuts
 
 
@@ -111,7 +111,7 @@ def test_get_top_shortcuts():
         ("robots",): 3,
         ("hello", "world"): 5,
     })
-    out = get_top_shortcuts(all_counts, 2)
+    out = get_best_phrases_to_shorten(all_counts, 2)
     # score, phrase, phrase_len, count
     expected = [
         (45, "hello world", 11, 5),
