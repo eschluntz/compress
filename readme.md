@@ -15,31 +15,41 @@ This repo can parse a corpus of text and suggest what shortcuts you should use t
 
 It also contains a tool for parsing a Slack Data Export of your messages to create a corpus.
 
-# What phrases to abbreviate?
+# What phrases should I abbreviate?
 The code looks through the corpus to find common n-grams that can be replaced with much shorter phrases. The suggestions are ranked by `[characters saved] * [frequency of phrase]`. 
 
-I was surprised that very short and frequent words topped this list, such as `t -> the`, as well as longer phrases that I use a lot, such as `wdytk -> what do you think`.
+I was surprised that very short and frequent words topped this list, such as `the -> t`, instead of longer phrases that I use a lot, such as `what do you think -> wdytk`.
 
 Just reading through the results was amusing to see how repetitive some of my writing is :)
 
-# How to pick the abbreviation?
+# How to pick abbreviations?
 This is largely preferences and heuristics to try to generate memorable abbreviations for different phrases. Some of my design philosphies were:
 
-1. The abbrev cannot be a word that I want to type. Right now this is done with a dictionary, but I should change it to use my actual corpus.
+1. The abbrev cannot be a word that I want to type. Right now this is done with a blacklist, but I should change it to use my actual corpus.
 2. The goal is being memorable. 1st letter is top choice, and 1st letter + last letter is next choice.
 3. More common phrases get priority for more memorable abbrevs.
-4. Plurals should have the same abbrev as the singular, but with an "s". For example `r -> robot` and `rs -> robots`. 
-5. If a word has an abbrev, a phrase that contains that word should contain the abbrev. For example:
+
+This is currently done as a manual post-process step, but I like to make "families"
+of abbrevs to make them more memorable. Some example heuristics for this are:
+
+1. Plurals should have the same abbrev as the singular, but with an "s". For example `robot -> r` and `robots -> rs`. 
+2. If a word has an abbrev, a phrase that contains that word should contain the abbrev. For example:
 ```
-t -> the
-r -> robot
-tr -> the robot
+the       -> t
+robot     -> r
+the robot -> tr
 ```
-6. Don't try to be perfect. These suggestions are meant to cover a lot of ground and then let you manually edit your favorites before use.
+3. Think about how similar words' abbrevs can be similar as well. i.e. 
+```
+some      -> s
+someone   -> sn
+something -> st
+sometime  -> sti
+```
 
 # Instructions
 
-1. run `install.sh` to install dependencies
+1. run `install.sh` to install dependencies. Currently tested on python 3.10.12
 1. Put any corpus of your text that you want to compress in `data/corpus/*.txt`
 2. If you want to use your slack history as a corpus:
     1. export it to a folder called `data/slack_export`. Only slack workspace admins can do this (and it only exports public channels).
@@ -53,6 +63,7 @@ tr -> the robot
     - If you're starting out, I suggest just going with 10-20 shortcuts to make it easier to remember them
 5. Run `generate_autokeys.py` to convert `shortcuts.yaml` into actual config files for `autokey`.
 6. Install [Autokey](https://github.com/autokey/autokey)
+    - Right now, Autokey is only supported on linux with X11, not Wayland
 7. Symlink the output into autokey's config: `ln -s output/autokey_phrases ~/.config/autokey/data/My Phrases/`
 8. From now on when you edit `shortcuts.yaml` you can re-generate and reload autokey with `reload.sh` 
 
