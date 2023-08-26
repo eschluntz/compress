@@ -9,13 +9,10 @@ from typing import Counter
 import os
 
 from find_suggested_phrases import (
-    get_plural,
     get_possible_abbrevs,
     get_top_shortcuts,
     match_abbrevs_to_phrases,
-    match_to_prev_abbrevs,
     corpus_to_ngrams,
-    get_singular,
     fix_grammer,
 )
 from generate_autokeys import create_autokey_config_for_abbrev
@@ -23,10 +20,8 @@ from parse_slack import extract_slack_msgs, clean_slack_msg
 from preset_abbrevs import BLACKLIST, PRESET_ABBREVS
 
 
-
 def test_presets():
     # just make sure we can import without crashing
-    assert "again" in PRESET_ABBREVS
     assert "a" in BLACKLIST
 
 
@@ -83,51 +78,31 @@ def test_match_abbrevs():
         (2372, 'on the', 6, 593)
     ]
     expected = {
-        'about': 'ab',
-        'and': 'n',
-        'the': 't',
-        'that': 'tt',
-        'this': 'ts',
-        'robot': 'r',
-        'robots': 'rs',
-        'something': 's',
-        'somethings': 'ss',
-        'should': 'sd',
-        'just': 'j',
-        'for': 'f',
-        'with': 'w',
-        'withes': 'ws',
-        'have': 'h',
-        'haves': 'hs',
-        'you': 'y',
-        'yous': 'ys',
-        'think': 'tk',
-        'thinks': 'tks',
-        'the robot': 'tr',
-        'need to': 'nt',
-        'i think': 'itk',
-        'of the': 'ot'
-    }
+        'about': 'ab', 
+        'and': 'n', 
+        'i think': 'itk', 
+        'the': 't', 
+        'that': 'tt', 
+        'the robot': 'tr', 
+        'this': 'ts', 
+        'robot': 'r', 
+        'need to': 'nt', 
+        'in the': 'e', 
+        'something': 's', 
+        'robots': 'rs', 
+        'should': 'sd', 
+        'just': 'j', 
+        'for': 'f', 
+        'with': 'w', 
+        'have': 'h', 
+        'you': 'y', 
+        'of the': 'ot', 
+        'think': 'tk', 
+        'on the': 'ont'
+     }
     presets = {"about": "ab", "and": "n", "i think": "itk"}
     shortcuts = match_abbrevs_to_phrases(input_phrases, BLACKLIST, presets)
     assert expected == shortcuts
-
-
-def test_match_to_prev_abbrevs():
-    shortcuts = {
-        "the": "t",
-        "robot": "r"
-    }
-
-    # plurals
-    out = match_to_prev_abbrevs(shortcuts, "robots")
-    assert out == "rs"
-
-    # composites
-    out = match_to_prev_abbrevs(shortcuts, "the robot")
-    assert out == "tr"
-
-    assert match_to_prev_abbrevs(shortcuts, "asdf") is None
 
 
 def test_get_top_shortcuts():
@@ -160,29 +135,6 @@ def test_corpus_to_n_grams():
         ("goodbye", "world"): 1,
     })
     assert expected == out
-
-
-def test_get_plural():
-    for word, expected in [
-        ("things", None),
-        ("wolf", "wolves"),
-        ("box", "boxes"),
-        ("robot", "robots"),
-        ("lady", "ladies"),
-        ("ash", "ashes"),
-        ("hero", "heroes"),
-    ]:
-        assert expected == get_plural(word)
-
-
-def test_get_singular():
-    for word, expected in [
-        ("things", "thing"),
-        ("robots", "robot"),
-        ("robot", None),
-        ("hello", None),
-    ]:
-        assert expected == get_singular(word)
 
 
 def test_fix_grammer():

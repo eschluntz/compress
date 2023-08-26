@@ -6,10 +6,9 @@ and abbreviations.
 """
 
 import os
-from typing import List, Dict, Optional, Set, Tuple
+from typing import List, Dict, Set, Tuple
 from collections import Counter, namedtuple
 from nltk.util import ngrams
-import enchant
 import yaml
 from preset_abbrevs import PRESET_ABBREVS, BLACKLIST
 
@@ -46,171 +45,35 @@ def get_possible_abbrevs(phrase: str) -> List[str]:
     return out
 
 
-def match_to_prev_abbrevs(shortcuts: Dict[str, str], phrase) -> Optional[str]:
-    """We want abbrevs to be consistent with each other with
-    compositions of other abbrevs, and plurals.
-    i.e: robot -> r, and robots -> rs.
-    i.e. the -> t, robot -> r, the robot -> tr"""
-
-    # plurals
-    if phrase[-1] == "s" and phrase[:-1] in shortcuts:
-        return shortcuts[phrase[:-1]] + "s"
-
-    # composite
-    words = phrase.split()
-    if len(words) > 1:
-        if all(word in shortcuts for word in words):
-            return "".join([shortcuts[word] for word in words])
-
-    return None
-
-
-def try_plural_of_word(word : str) -> str:
-    """Find the plural of a word"""
-    if word[-1] == "s":
-        return None
-    if word[-1] == "y":
-        return word[:-1] + "ies"
-    if word[-1] == "f":
-        return word[:-1] + "ves"
-    if word[-1] in "ohxz":
-        return word + "es"
-    return word + "s"
-
-
-def get_plural(word : str) -> Optional[str]:
-    candidate = try_plural_of_word(word)
-    d = enchant.Dict("en_US")
-    if candidate is None:
-        return None
-    elif d.check(candidate):
-        return candidate
-    else:
-        return None
-
-
-def get_singular(word : str) -> Optional[str]:
-    """Note: doesn't work for complex plurals like wolves... todo"""
-    candidate = word[:-1]
-    d = enchant.Dict("en_US")
-    if d.check(candidate) and get_plural(candidate) == word:
-        return candidate
-    else:
-        return None
-
-
-def is_plural(word : str) -> bool:
-    """Check if word is plural.
-    defintion of plural is that there exists a singular version"""
-    # not always correct, but close enough
-    d = enchant.Dict("en_US")
-    candidate = word[:-1]
-    return word[-1] == "s" and d.check(candidate) and get_plural(candidate) == word
-
-
 def match_abbrevs_to_phrases(results: List[tuple], blacklist : Set[str], presets : Dict[str, str]) -> Dict[str, str]:
     """Find the best abbreviation for each phrase.
     Returns a dict of phrase -> abbrev, i.e. {'because': 'bc'}.
 
-    1. start with highest scoring single words
-    2. Create abbrev for each one.
-    3. create single / plural duplicate as well
-    4. go through multi-word phrases and use single word components
-    5. if any multi-word phrases overlap, use whichever had the higher score
-
-    the idea here is to end up with sets that are composable:
-    the -> t,
-    robot -> r,
-    robots -> rs,
-    the robots -> trs
+    Highest scoring phrases get priority for most memorable shortcuts.
     """
-    # start with the presets
+    # start with the presets and blacklist
     abbrev_set = blacklist
     shortcuts = presets
     for _, v in shortcuts.items():
         abbrev_set.add(v)
 
-    # single words first
     for row in results:
         phrase = row[1]
-        if " " in phrase:
-            continue
-
-        # create singular and plural versions
-        # singular is ALWAYS set, but plural is only sometimes
-        # defintion of plural is that there exists a singular version
-        # ie "the" is singular without a plural
-        if is_plural(phrase):
-            plural = phrase
-            singular = get_singular(phrase)
-        else:
-            singular = phrase
-            plural = get_plural(phrase)
-
-        # anything in the presets already just don't touch
-        if singular in shortcuts:
-            continue
-
-        posssible_abbrevs = get_possible_abbrevs(singular)
-        for abbrev in posssible_abbrevs:  # ordered best to worst
-            if abbrev not in abbrev_set and len(abbrev) < len(singular) - 1:
-                abbrev_set.add(abbrev)
-                shortcuts[singular] = abbrev
-
-                # add plural
-                if plural is not None:
-                    abbrev2 = abbrev + "s"
-                    if abbrev2 not in abbrev_set and len(abbrev2) < len(plural) - 1:
-                        abbrev_set.add(abbrev)
-                        shortcuts[plural] = abbrev2
-                    else:
-                        print(f"warning, blocked {plural} as {abbrev2}")
-                break
-        else:
-            print(f"warning, no abbrev for {singular}")
-
-    print("===============================")
-    # now handle multi-word shortcuts
-    for row in results:
-        phrase = row[1]
-        if " " not in phrase:
-            continue
 
         # anything in the presets already just don't touch
         if phrase in shortcuts:
             continue
 
-        # construct from other words
-        words = phrase.split()
-        abbrev = ""
-        for word in words:
-            abbrev += shortcuts.get(word, word[0])
-
-        if abbrev not in abbrev_set:
-            # print(f"{phrase:20}:\t{abbrev}")
-            abbrev_set.add(abbrev)
-            shortcuts[phrase] = abbrev
+        posssible_abbrevs = get_possible_abbrevs(phrase)
+        for abbrev in posssible_abbrevs:  # ordered best to worst
+            if abbrev not in abbrev_set and len(abbrev) < len(phrase) - 1:  # save at least two chars
+                abbrev_set.add(abbrev)
+                shortcuts[phrase] = abbrev
+                break
         else:
-            this_score = row[0]
-
-            # find who has this abbrev, and it's score
-            # TODO could clean this up by storing a reverse data structure
-            for other_phrase, other_abbrev in shortcuts.items():
-                if other_abbrev == abbrev:
-
-                    # now look up the score
-                    for row2 in results:
-                        if row2[1] == other_phrase:
-                            other_score = row2[0]
-
-                            # compare the scores to overwrite
-                            if this_score > other_score:
-                                shortcuts[phrase] = abbrev
-                            break
-                    break
+            print(f"warning, no abbrev for {phrase} with score {row[0]}")
 
     return shortcuts
-
 
 
 def load_corpus() -> List[str]:
@@ -274,11 +137,11 @@ def save_shortcuts(shortcuts: Dict[str, str]) -> None:
 if __name__ == "__main__":
 
     texts = load_corpus()
-    all_counts = corpus_to_ngrams(texts, 3)
+    all_counts = corpus_to_ngrams(texts, 4)
     top_results = get_top_shortcuts(all_counts, 200)
 
-    for results in top_results:
-        print(f"{results[1]:20}:\t{results[0]:6} score\t{results[3]} times")
+    # for results in top_results:
+    #     print(f"{results[1]:20}:\t{results[0]:6} score\t{results[3]} times")
 
     shortcuts = match_abbrevs_to_phrases(top_results, BLACKLIST, PRESET_ABBREVS)
 

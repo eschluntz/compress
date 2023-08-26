@@ -5,4 +5,5 @@ data/
 .coverage
 htmlcov/
 output/autokey_phrases/
+output/suggested_shortcuts.yaml
 .python-version
