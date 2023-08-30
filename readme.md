@@ -3,22 +3,24 @@
 [![Build Status](https://github.com/eschluntz/compress/actions/workflows/run_tests.yml/badge.svg)](https://github.com/eschluntz/compress/actions)
 
 # Compress
-This is a tool for automatically creating typing shortcuts from a corpus of your own writing! For example when I want to write:
+![demo](img/expand-demo.gif)
 
-`What's the problem with this robot? What debugging steps have you tried?` 
+This is a tool for automatically creating typing shortcuts from a corpus of your own writing! I use these shortcuts mainly for email and slack:
 
-I physically type:
+![email](img/email-expand.gif)
 
-`wts tpm w ts r? wt db steps h y tried?`.
+![slack](img/slack-expand.gif)
 
-This repo can parse a corpus of text and suggest what shortcuts you should use to save the most letters while typing. It then generates config files for [Autokey](https://github.com/autokey/autokey), a linux program that implements keyboard shortcuts!
+This repo parses a corpus of text and suggest what shortcuts you should use to save the most letters while typing. It then generates config files for [Autokey](https://github.com/autokey/autokey), a linux program that implements keyboard shortcuts!
 
-It also contains a tool for parsing a Slack Data Export of your messages to create a corpus.
+It also contains a tool for optionally parsing a Slack Data Export of your messages to create a corpus.
 
 # What phrases should I abbreviate?
 The code looks through the corpus to find common n-grams that can be replaced with much shorter phrases. The suggestions are ranked by `[characters saved] * [frequency of phrase]`. 
 
 I was surprised that very short and frequent words topped this list, such as `the -> t`, instead of longer phrases that I use a lot, such as `what do you think -> wdytk`.
+
+![results](img/chars-saved.png)
 
 Just reading through the results was amusing to see how repetitive some of my writing is :)
 

@@ -59,8 +59,7 @@ PRESET_ABBREVS = {
 # these will not be used as abbrevs.
 # TODO: these could be taken directly from the corpus
 BLACKLIST = set([
-    "a", "ai", "alt", "i", "id", "it", "an", "int", "so",
-    "is", "re", "we", "the", "in", "as",
-    "no", "ie", "eg", "me", "be", "at", "do",
-    "talk", "to",
+    "a", "ai", "alt", "i", "id", "it", "an", "int",
+    "so", "is", "re", "we", "the", "in", "as", "no",
+    "ie", "eg", "me", "be", "at", "do", "talk", "to",
 ])
