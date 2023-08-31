@@ -23,7 +23,10 @@ Shortcut = namedtuple("Shortcut", ["phrase", "abbrev", "score", "count", "len"])
 
 
 def get_possible_abbrevs(phrase: str) -> List[str]:
-    """Get possible short abbreviations for a phrase, in order of preference"""
+    """Get possible short abbreviations for a phrase, in order of preference.
+    Input phrase must be at least 2 letters."""
+    if len(phrase) < 2:
+        return [phrase]
     words = phrase.split()
     out: List[str] = []
 
@@ -118,6 +121,8 @@ def get_best_phrases_to_shorten(phrase_counts: Counter, n_to_keep: int) -> List[
             continue
         phrase = " ".join(phrase_tuple)
         phrase_len = len(phrase)
+        if phrase_len < 2: # length 1 phrases can't be abbreviated
+            continue
         avg_shortcut_len = 2
         score = (phrase_len - avg_shortcut_len) * count  # how many chars will be saved
         phrase_data.append((score, phrase, phrase_len, count))
