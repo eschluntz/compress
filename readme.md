@@ -66,7 +66,7 @@ sometime  -> sti
 5. Run `generate_autokeys.py` to convert `shortcuts.yaml` into actual config files for `autokey`.
 6. Install [Autokey](https://github.com/autokey/autokey)
     - Right now, Autokey is only supported on linux with X11, not Wayland
-7. Symlink the output into autokey's config: `ln -s output/autokey_phrases ~/.config/autokey/data/My Phrases/`
+7. Check that your autokey config is located at `~/.config/autokey/data/My Phrases/`. If it is somewhere else, change `reload.sh:8` to point to your config location
 8. From now on when you edit `shortcuts.yaml` you can re-generate and reload autokey with `reload.sh` 
 
 # Notes
