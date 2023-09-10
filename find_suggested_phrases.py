@@ -12,12 +12,10 @@ a 'Shortcut' is a joint 'Phrase' and 'Abbreviation'.
 """
 
 import os
-from typing import List, Dict, Tuple
+from typing import Iterator, List, Dict, Tuple
 from collections import Counter, namedtuple
-from nltk.util import ngrams
 import yaml
 from preset_abbrevs import PRESET_ABBREVS, BLACKLIST
-
 
 Shortcut = namedtuple("Shortcut", ["phrase", "abbrev", "score", "count", "len"])
 
@@ -101,14 +99,17 @@ def load_corpus(corpus_path="data/corpus/") -> List[str]:
     return all_lines
 
 
+def ngrams(tokens: list[str], n: int) -> Iterator[tuple[str]]:
+    return (tuple(tokens[i : i + n]) for i in range(len(tokens) - n + 1))
+
+
 def corpus_to_ngrams(corpus: List[str], max_n: int) -> Counter:
     """Convert a corpus of strings into a Counter of n-grams of various lengths"""
     all_counts = Counter()
     for line in corpus:
         tokenized = line.split()
         for n in range(1, max_n + 1):
-            gram = ngrams(tokenized, n)
-            all_counts.update(Counter(gram))
+            all_counts.update(ngrams(tokenized, n))
 
     return all_counts
 
