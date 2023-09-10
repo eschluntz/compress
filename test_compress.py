@@ -139,7 +139,7 @@ def test_corpus_to_n_grams():
 
 
 def test_load_corpus():
-    all_lines = load_corpus("test_data/test_corpus/")
+    all_lines = load_corpus("test_data/test_corpus/", {'.txt'})
     expected = ["hello world", "testing", "also here"]
     assert all_lines == expected
 

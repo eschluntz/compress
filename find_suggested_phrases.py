@@ -2,7 +2,7 @@
 
 """
 Script to turn a corpus of text into a list of suggested phrases
-and abbreviations. 
+and abbreviations.
 
 Reads data from data/corpus/*.txt
 Outputs suggested abbreviations to output/suggested_shortcuts.yaml
@@ -11,11 +11,15 @@ Terminology:
 a 'Shortcut' is a joint 'Phrase' and 'Abbreviation'.
 """
 
+import argparse
 import os
-from typing import Iterator, List, Dict, Tuple
 from collections import Counter, namedtuple
+from pathlib import Path
+from typing import Dict, Iterable, List, Tuple
+
 import yaml
-from preset_abbrevs import PRESET_ABBREVS, BLACKLIST
+
+from preset_abbrevs import BLACKLIST, PRESET_ABBREVS
 
 Shortcut = namedtuple("Shortcut", ["phrase", "abbrev", "score", "count", "len"])
 
@@ -46,13 +50,13 @@ def get_possible_abbrevs(phrase: str) -> List[str]:
         phrase[:2] + phrase[-1],
         phrase[0] + phrase[-2:],
         phrase[:4],
-        phrase[:2] + phrase[-2:]
+        phrase[:2] + phrase[-2:],
     ]
 
     return out
 
 
-def match_abbrevs_to_phrases(results: List[tuple], presets : Dict[str, str]) -> Dict[str, str]:
+def match_abbrevs_to_phrases(results: List[tuple], presets: Dict[str, str]) -> Dict[str, str]:
     """Find the best abbreviation for each phrase without overlap.
 
     Returns a dict of phrase -> abbrev, i.e. {'because': 'bc'}.
@@ -84,22 +88,22 @@ def match_abbrevs_to_phrases(results: List[tuple], presets : Dict[str, str]) -> 
     return shortcut_dict
 
 
-def load_corpus(corpus_path="data/corpus/") -> List[str]:
+def load_corpus(path: str, extensions: set[str]) -> Iterable[str]:
     """Load all txt files under data/corpus, and return as a list of strings"""
     all_lines = []
     found_data = False
-    for filename in os.listdir(corpus_path):
-        if filename.endswith(".txt"):
-            found_data = True
-            with open(os.path.join(corpus_path, filename), 'r', encoding="utf8") as f:
-                all_lines.extend(f.readlines())
-    if not found_data:
-        print("Warning: No txt files found in data/corpus/")
-    all_lines = [line.strip() for line in all_lines]
+    for dirpath, _dirnames, filenames in os.walk(path):
+        for filename in filenames:
+            if Path(filename).suffix in extensions:
+                found_data = True
+                lines = (Path(dirpath) / filename).read_text().splitlines(keepends=False)
+                yield from lines
+    if not all_lines:
+        print("Warning: No files found in data/corpus/")
     return all_lines
 
 
-def ngrams(tokens: list[str], n: int) -> Iterator[tuple[str]]:
+def ngrams(tokens: list[str], n: int) -> Iterable[tuple[str]]:
     return (tuple(tokens[i : i + n]) for i in range(len(tokens) - n + 1))
 
 
@@ -116,21 +120,20 @@ def corpus_to_ngrams(corpus: List[str], max_n: int) -> Counter:
 
 def get_best_phrases_to_shorten(phrase_counts: Counter, n_to_keep: int) -> List[tuple]:
     """Get the best scoring phrases that should be shortened into abbreviations"""
-    phrase_data : List[Tuple] = []
+    phrase_data: List[Tuple] = []
     for phrase_tuple, count in phrase_counts.items():
         if count <= 3:  # don't count rare but super long phrases
             continue
         phrase = " ".join(phrase_tuple)
         phrase_len = len(phrase)
-        if phrase_len < 2: # length 1 phrases can't be abbreviated
+        if phrase_len < 2:  # length 1 phrases can't be abbreviated
             continue
         avg_shortcut_len = 2
         score = (phrase_len - avg_shortcut_len) * count  # how many chars will be saved
         phrase_data.append((score, phrase, phrase_len, count))
 
     phrase_data = sorted(phrase_data, reverse=True)
-    phrase_data = phrase_data[:n_to_keep]
-    return phrase_data
+    return phrase_data[:n_to_keep]
 
 
 def fix_grammer(text: str) -> str:
@@ -147,12 +150,16 @@ def fix_grammer(text: str) -> str:
 def save_shortcuts(shortcuts: Dict[str, str]) -> None:
     """Save the shortcuts to a yaml file"""
     with open("output/suggested_shortcuts.yaml", 'w', encoding="utf8") as f:
-        yaml.dump(shortcuts, f, default_flow_style=False)
+        yaml.dump(shortcuts, f, default_flow_style=False, sort_keys=False)
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("--corpus", default="data/corpus/", help="Corpus directory")
+    parser.add_argument("--ext", default="txt,py", help="File extensions to look for in corpus, separated by ','")
+    args = parser.parse_args()
 
-    texts = load_corpus()
+    texts = load_corpus(path=args.corpus, extensions={f'.{ext}' for ext in args.ext.split(',')})
     all_counts = corpus_to_ngrams(texts, 4)
     top_results = get_best_phrases_to_shorten(all_counts, 200)
 
