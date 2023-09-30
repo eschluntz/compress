@@ -14,7 +14,7 @@ from find_suggested_phrases import (
     match_abbrevs_to_phrases,
     corpus_to_ngrams,
     fix_grammer,
-    load_corpus
+    load_corpus,
 )
 from generate_autokeys import create_autokey_config_for_shortcut
 from parse_slack import extract_slack_msgs, clean_slack_msg
@@ -76,31 +76,31 @@ def test_match_abbrevs():
         (2594, 'you', 3, 2594),
         (2508, 'of the', 6, 627),
         (2427, 'think', 5, 809),
-        (2372, 'on the', 6, 593)
+        (2372, 'on the', 6, 593),
     ]
     expected = {
-        'about': 'ab', 
-        'and': 'n', 
-        'i think': 'itk', 
-        'the': 't', 
-        'that': 'tt', 
-        'the robot': 'tr', 
-        'this': 'ts', 
-        'robot': 'r', 
-        'need to': 'nt', 
-        'in the': 'e', 
-        'something': 's', 
-        'robots': 'rs', 
-        'should': 'sd', 
-        'just': 'j', 
-        'for': 'f', 
-        'with': 'w', 
-        'have': 'h', 
-        'you': 'y', 
-        'of the': 'ot', 
-        'think': 'tk', 
-        'on the': 'ont'
-     }
+        'about': 'ab',
+        'and': 'n',
+        'i think': 'itk',
+        'the': 't',
+        'that': 'tt',
+        'the robot': 'tr',
+        'this': 'ts',
+        'robot': 'r',
+        'need to': 'nt',
+        'in the': 'e',
+        'something': 's',
+        'robots': 'rs',
+        'should': 'sd',
+        'just': 'j',
+        'for': 'f',
+        'with': 'w',
+        'have': 'h',
+        'you': 'y',
+        'of the': 'ot',
+        'think': 'tk',
+        'on the': 'ont',
+    }
     presets = {"about": "ab", "and": "n", "i think": "itk"}
     shortcuts = match_abbrevs_to_phrases(input_phrases, presets)
     assert expected == shortcuts
@@ -116,16 +116,13 @@ def test_get_top_shortcuts():
     # score, phrase, phrase_len, count
     expected = [
         (45, "hello world", 11, 5),
-        (30, "hello", 5, 10)
+        (30, "hello", 5, 10),
     ]
     assert out == expected
 
 
 def test_corpus_to_n_grams():
-    corpus = [
-        "hello world",
-        "hello world goodbye world"
-    ]
+    corpus = ["hello world", "hello world goodbye world"]
     out = corpus_to_ngrams(corpus, 2)
     expected = Counter({
         ("hello",): 2,
@@ -139,9 +136,7 @@ def test_corpus_to_n_grams():
 
 
 def test_load_corpus():
-    all_lines = load_corpus("test_data/test_corpus/")
-    expected = ["hello world", "testing", "also here"]
-    assert all_lines == expected
+    assert set(load_corpus("test_data/test_corpus/", {'.txt'})) == {"hello world", "testing", "also here"}
 
 
 def test_fix_grammer():
