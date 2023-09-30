@@ -88,7 +88,7 @@ def load_corpus(corpus_path="data/corpus/") -> List[str]:
     """Load all txt files under data/corpus, and return as a list of strings"""
     all_lines = []
     found_data = False
-    for filename in os.listdir(corpus_path):
+    for filename in sorted(os.listdir(corpus_path)):
         if filename.endswith(".txt"):
             found_data = True
             with open(os.path.join(corpus_path, filename), 'r', encoding="utf8") as f:
@@ -100,7 +100,8 @@ def load_corpus(corpus_path="data/corpus/") -> List[str]:
 
 
 def ngrams(tokens: list[str], n: int) -> Iterator[tuple[str]]:
-    return (tuple(tokens[i : i + n]) for i in range(len(tokens) - n + 1))
+    count = len(tokens) - n + 1
+    return (tuple(tokens[i : i + n]) for i in range(count))
 
 
 def corpus_to_ngrams(corpus: List[str], max_n: int) -> Counter:
