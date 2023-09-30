@@ -89,8 +89,7 @@ def match_abbrevs_to_phrases(results: List[tuple], presets: Dict[str, str]) -> D
 
 
 def load_corpus(path: str, extensions: set[str]) -> Iterable[str]:
-    """Load all txt files under data/corpus, and return as a list of strings"""
-    all_lines = []
+    """Load all txt files under data/corpus and return an iterator on strings"""
     found_data = False
     for dirpath, _dirnames, filenames in os.walk(path):
         for filename in filenames:
@@ -98,9 +97,8 @@ def load_corpus(path: str, extensions: set[str]) -> Iterable[str]:
                 found_data = True
                 lines = (Path(dirpath) / filename).read_text().splitlines(keepends=False)
                 yield from lines
-    if not all_lines:
+    if not found_data:
         print("Warning: No files found in data/corpus/")
-    return all_lines
 
 
 def ngrams(tokens: list[str], n: int) -> Iterable[tuple[str]]:
